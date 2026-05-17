@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  backend-app:
+    build: ./backend
+    container_name: innovatube_backend
+    ports:
+      - "5000:5000"          # Mapea el puerto 5000 del contenedor a tu localhost:5000
+    volumes:
+      - ./backend:/usr/src/app   # Sincroniza cambios en caliente de tu código local al contenedor
+      - /usr/src/app/node_modules # Evita conflictos con los node_modules locales
+    environment:
+      - PORT=5000
+      - YOUTUBE_API_KEY=AIzaSyB65MjFtO6pAt0AS64d8-E6FbjBfD7X9Gg
+      # Añade aquí otras variables de entorno si las necesitas

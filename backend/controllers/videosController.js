@@ -1,23 +1,6 @@
 const { response } = require("express");
 const { youtube } = require("../api/config");
 
-
-// const searchVideos = async (query) => {
-//   try {
-//     const res = await youtube.search.list({
-//       part: 'snippet',
-//       q: query,
-//       type: 'video',
-//       maxResults: 10
-//     });
-//     // console.log(res.data.items)
-//     return res.data.items;
-//   } catch (error) {
-//     console.error("Viedeo not found :(", error);
-//     throw error;
-//   }
-// };
-
 const searchVideos = async(req, res = response={}) => {
     const {q, type, maxResults} = req.query
 
