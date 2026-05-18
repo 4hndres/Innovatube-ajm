@@ -1,11 +1,11 @@
 const express = require('express')
 const cors = require('cors')
 require('dotenv').config()
-const { searchVideos } = require('./controllers/videosController')
+const { dbConnection } = require('./api/dbConfig')
 
 
 const app = express()
-
+dbConnection();
 
 app.use(cors(
     {
@@ -33,7 +33,7 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }))
 // ROUTES
 app.use('/api/auth', require('./routes/routes.auth'))
 app.use('/api/videos', require('./routes/routes.videos'))
-// app.use('/api/banners', require('./routes/banners'))
+app.use('/api/favourites', require('./routes/routes.favourites'))
 // app.use('/api/sales', require('./routes/sales'))
 // app.use('/api/payments', require('./routes/payments'))
 // app.use('/api/categories', require('./routes/categories'))
