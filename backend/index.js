@@ -17,28 +17,11 @@ app.use(express.static('public'))
 
 // READING AND PARSING OF BODY REQUEST
 app.use(express.json({ limit: '50mb' }))
-app.use(express.urlencoded({ extended: true, limit: '50mb' }))
-
-
-// app.get('/api/buscar', async (req, res) => {
-//   try {
-//     const query = req.query.q || 'Queens of the stone age';
-//     const videos = await searchVideos(query);
-//     res.json(videos);
-//   } catch (error) {
-//     res.status(500).json({ error: 'Error al obtener datos de YouTube' });
-//   }
-// });
 
 // ROUTES
 app.use('/api/auth', require('./routes/routes.auth'))
 app.use('/api/videos', require('./routes/routes.videos'))
 app.use('/api/favourites', require('./routes/routes.favourites'))
-// app.use('/api/sales', require('./routes/sales'))
-// app.use('/api/payments', require('./routes/payments'))
-// app.use('/api/categories', require('./routes/categories'))
-// app.use('/api/uploads', require('./routes/uploads'))
-
 
 
 // REQUESTS LISTENING

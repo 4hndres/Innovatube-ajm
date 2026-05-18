@@ -1,13 +1,13 @@
 const { Router } = require("express");
-const { googleSignIn, createUser, loginUser, deleteUser, getUsers } = require("../controllers/authController");
+const { createUser, loginUser, deleteUser, getUsers } = require("../controllers/authController");
 const router = Router()
 
-router.post('/', googleSignIn)
+// FOR DEVELOPMENT ONLY
+// router.get('/', getUsers);
+router.delete('/:id', deleteUser);
 
-router.get('/', getUsers);
 router.post('/register', createUser);
 router.post('/login', loginUser);
-router.delete('/:id', deleteUser);
 
 
 module.exports = router

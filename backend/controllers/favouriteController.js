@@ -17,7 +17,7 @@ const addFavourite = async (req, res) => {
 };
 
 const getFavourites = async (req, res) => {
-    const { email } = req.body; 
+    const { email } = req.query; 
     try {
         const favourites = await Favourite.find({ userEmail: email });
         res.json({ ok: true, favourites });

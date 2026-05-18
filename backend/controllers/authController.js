@@ -7,7 +7,8 @@ const {generateJWT} = require("../helpers/jwt")
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
 
 const getUsers = async (req, res = response) => {
-  const users = await User.find({}, '-password');
+
+    const users = await User.find({});
   return res.json({
     ok: true,
     users,
@@ -42,7 +43,6 @@ const createUser =  async(req, res = response) => {
     
         res.status(201).json({
             ok: true,
-            // msg:"User created succesfully!!"
             uuid: user.id,
             name: user.name+" "+user.lastName,
             userName,
@@ -59,13 +59,17 @@ const createUser =  async(req, res = response) => {
 }
 
 const loginUser = async(req, res = response) => {
-    const { userIdentifier,  password} = req.body
+    const { email, password} = req.body
 
     try {
-        let user = await User.findOne({userIdentifier})
-        let userN = await User.findOne({userIdentifier})
+        const user = await User.findOne({
+            $or: [
+                {email: email},
+                {userName: email}
+            ]
+        })
         
-        if(!user || !userN){
+        if(!user ){
             return res.status(400).json({
                 ok: false,
                 msg:'Email or password are incorrect!!'
@@ -82,13 +86,14 @@ const loginUser = async(req, res = response) => {
         }
 
         // GENERTATE JWT
-        const token = await generateJWT(user.id, user.name+user.lastName)
+        const token = await generateJWT(user.id, user.name)
 
         res.json({
             ok:true,
-            // msg: ""
             uuid: user.id,
-            name: user.name+user.lastName,
+            name: user.name+" "+user.lastName,
+            userName: user.userName,
+            email: user.email,
             token
         })
 
@@ -128,39 +133,4 @@ const deleteUser = async (req, res) => {
   }
 };
 
-const googleSignIn = async (req, res) => {
-    const {token} = req.body
-
-    if(!token) {
-        return res.status(400).json({ok: false, msg: "The token is missing :("})
-    }
-
-    try {
-        const ticket = await client.verifyIdToken({
-            idToken: token,
-            audience: process.env.GOOGLE_CLIENT_ID
-        })
-
-        const payload = ticket.getPayload()
-
-        const user = {
-            email: payload.email,
-            name: payload.name,
-        }
-
-        res.json({
-            ok: true,
-            msg: "Logged succesfully",
-            user
-        })
-
-    } catch (error) {
-        console.log(error)
-        return res.status(401).json({
-            ok: false,
-            msg: "Invalid token"
-        })
-    }
-}
-
-module.exports = {googleSignIn, getUsers, createUser, loginUser, deleteUser}
+module.exports = {getUsers, createUser, loginUser, deleteUser}

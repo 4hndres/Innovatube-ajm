@@ -1,28 +1,31 @@
 services:
+  frontend-app:
+    build: ./frontend
+    container_name: innovatube_frontend_prod
+    ports:
+      - "80:80"                  
+    depends_on:
+      - backend-app
+
   backend-app:
     build: ./backend
-    container_name: innovatube_backend
+    container_name: innovatube_backend_prod
     ports:
-      - "5000:5000"          # Mapea el puerto 5000 del contenedor a tu localhost:5000
-    volumes:
-      - ./backend:/usr/src/app   # Sincroniza cambios en caliente de tu código local al contenedor
-      - /usr/src/app/node_modules # Evita conflictos con los node_modules locales
+      - "5000:5000"              
     environment:
       - PORT=5000
+      - MONGO_URI=mongodb://mongodb-service:27017/innovatube
       - YOUTUBE_API_KEY=AIzaSyB65MjFtO6pAt0AS64d8-E6FbjBfD7X9Gg
-      - FRONTEND_URL=http://localhost:5173
       - GOOGLE_CLIENT_ID=306348669655-i7110gnuj9edrjr0v674l48fng710n7d.apps.googleusercontent.com
-      - MONGO_URI=mongodb://mongodb-service:27017/innovatube  # URL interna de Docker
+      - FRONTEND_URL=http://TU_DOMINIO_O_IP_PUBLICA_DEL_FRONTEND
     depends_on:
-      - mongodb-service 
+      - mongodb-service
 
   mongodb-service:
     image: mongo:latest
-    container_name: innovatube_db
-    ports:
-      - "27017:27017"
+    container_name: innovatube_db_prod
     volumes:
-      - mongo_data:/data/db
+      - mongo_data_prod:/data/db
 
 volumes:
-  mongo_data:
+  mongo_data_prod:
