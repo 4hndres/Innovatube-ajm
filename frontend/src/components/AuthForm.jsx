@@ -126,7 +126,6 @@ export const AuthForm = ({ onLoginSuccess }) => {
           className='login-reg-form-fields'
         />
 
-        {/* Campo exclusivo de Confirmación de Contraseña */}
         {!isLogin && (
           <input
             type="password"

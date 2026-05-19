@@ -10,30 +10,23 @@ import "./App.css"
 function App() {
   const [videos, setVideos] = useState([]);
   const [favourites, setFavourites] = useState([]);
-  const [usuario, setUsuario] = useState(null);
-  const [loading, setLoading] = useState(false)
+  const [user, setUser] = useState(null);
   const [showOnlyFavs, setShowOnlyFavs] = useState(false)
 
 
    useEffect(() => {
-      if (usuario?.email) {
-        cargarFavoritos();
+      if (user?.email) {
+        cargarFavourites();
       }
     }, [usuario]);
 
-    const cargarFavoritos = async () => {
+    const cargarFavourites = async () => {
     try {
-      const data = await getFavourites(usuario.email);
+      const data = await getFavourites(user.email);
       if (data.ok) setFavourites(data.favourites);
     } catch (error) {
       console.error("Error cargando favoritos:", error);
     }
-  };
-
-  const handleLogout = () => {
-    logoutUser();
-    setUsuario(null);
-    setVideos([]); // Limpia las búsquedas al salir
   };
 
   const handleToggleFavourite = async (video, isFav) => {
@@ -41,16 +34,14 @@ function App() {
 
     try {
       if (isFav) {
-        // Buscar el ID único autogenerado por MongoDB (_id) para poder borrarlo
         const favDbItem = favourites.find(f => f.videoId === videoId);
         if (favDbItem) {
           await deleteFavourite(favDbItem._id);
           setFavourites(favourites.filter(f => f.videoId !== videoId));
         }
       } else {
-        // Guardar nuevo favorito en la Base de Datos
-        await addFavourite(usuario.email, video);
-        cargarFavoritos(); // Recargamos de la BD para obtener el nuevo _id generado por Mongo
+        await addFavourite(user.email, video);
+        cargarFavoritos();
       }
     } catch (error) {
       console.error("Error al procesar el favorito:", error);
@@ -60,8 +51,7 @@ function App() {
 
   const handleSearch = async (query) => {  
     if (query.trim().length === 0) return;
-    setShowOnlyFavs(false); // Regresa a la pestaña de búsqueda al escribir algo nuevo
-    try {
+    setShowOnlyFavs(false);    try {
       const data = await getVideosByQuery(query);
       if (data.ok) setVideos(data.videos);
     } catch (error) {
@@ -73,10 +63,10 @@ function App() {
 
   return (
     <>  
-        {usuario ? (
+        {user ? (
         <>
           <div className='navbar'>
-            <h2>¡Hola, {usuario.name}! 👋</h2>
+            <h2>Hola, {user.name}</h2>
             <div>
               {/* Botones de navegación tipo Pestañas */}
               <button onClick={() => setShowOnlyFavs(false)} className='navbar-btn-search'>Buscar</button>
@@ -87,7 +77,7 @@ function App() {
 
           {!showOnlyFavs ? (
             <>
-              <SearchBar placeholder="Busca videos..." onQuery={handleSearch} />    
+              <SearchBar placeholder="Busca videos" onQuery={handleSearch} />    
               <h3 style={{ paddingLeft: '20px' }}>Resultados de Búsqueda</h3>
               <VideoGrid videos={videos} onToggleFavourite={handleToggleFavourite} favouritesIds={favouritesIds} />
             </>
@@ -99,7 +89,7 @@ function App() {
           )}
         </>
       ) : (
-        <AuthForm onLoginSuccess={setUsuario} />
+        <AuthForm onLoginSuccess={setUser} />
       )}
     </>
   )
